@@ -1,14 +1,4 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import Navigation from './config/Navigation';
 
-const App = () => {
-  return <Text style={styles.app}>Hello</Text>;
-};
-
-const styles = StyleSheet.create({
-  app: {
-    alignSelf: 'center',
-  },
-});
-
-export default App;
+export default () => <Navigation />;
