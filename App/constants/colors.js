@@ -1,0 +1,11 @@
+export default {
+  white: '#fff',
+  appPrimary: '#7C0000',
+  secondaryColor: '#DEC87A',
+  border: '#D3D3D3',
+  lightBlue: '#02BEE8',
+  green: '#00B152',
+  red: '#D10000',
+  lightGray: '#E9E9E9',
+  lightBlack: '#626058',
+};

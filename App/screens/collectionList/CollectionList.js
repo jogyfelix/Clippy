@@ -2,14 +2,13 @@ import React from 'react';
 import {Text, StyleSheet, View, StatusBar} from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/fab';
-import screenNames from '../../constants/screenNames';
 
-const Home = ({navigation}) => {
+const Collections = () => {
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
       <View style={styles.fabParent}>
-        <Fab onOpen={() => navigation.push(screenNames.CollectionList)} />
+        <Fab onOpen={() => alert('clicked')} />
       </View>
     </View>
   );
@@ -27,4 +26,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Collections;
