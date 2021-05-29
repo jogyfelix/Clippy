@@ -1,16 +1,40 @@
-import React from 'react';
-import {Text, StyleSheet, View, StatusBar} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  StatusBar,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import colors from '../../constants/colors';
-import Fab from '../../components/fab';
+import Fab from '../../components/Fab';
 import screenNames from '../../constants/screenNames';
+import strings from '../../constants/strings';
+import Modal from 'react-native-modal';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Home = ({navigation}) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
       <View style={styles.fabParent}>
-        <Fab onOpen={() => navigation.push(screenNames.CollectionList)} />
+        <Fab onOpen={toggleModal} />
       </View>
+      <Modal
+        isVisible={isModalVisible}
+        coverScreen={false}
+        onBackdropPress={() => setModalVisible(false)}
+
+        // when fab menu is shown
+        // style={{justifyContent: 'flex-end', margin: 0}}
+      ></Modal>
     </View>
   );
 };
