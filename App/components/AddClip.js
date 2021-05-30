@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Text, View, TextInput, TouchableOpacity} from 'react-native';
-import colors from '../../constants/colors';
-import strings from '../../constants/strings';
+import colors from '../constants/colors';
+import strings from '../constants/strings';
 
 const AddClip = () => {
   const [open, setOpen] = useState(false);

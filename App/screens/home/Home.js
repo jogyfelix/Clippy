@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   StyleSheet,
@@ -12,14 +12,45 @@ import Fab from '../../components/Fab';
 import screenNames from '../../constants/screenNames';
 import strings from '../../constants/strings';
 import Modal from 'react-native-modal';
-import DropDownPicker from 'react-native-dropdown-picker';
+import AddCollection from '../../components/AddCollection';
+import {addCollection, getCollections} from '../../data/localStorage';
 
 const Home = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  let collectionName = '';
+  const [collectionsList, setCollectionsList] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  const addNewCollection = async () => {
+    try {
+      if (collectionName !== '') {
+        const addResult = await addCollection(collectionName);
+        console.log(addResult);
+        const result = await getCollections();
+        setCollectionsList(collectionsList);
+        console.log(result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getList = async () => {
+    try {
+      const result = await getCollections();
+      setCollectionsList(result);
+      console.log(collectionsList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
 
   return (
     <View style={styles.homeParent}>
@@ -31,10 +62,18 @@ const Home = ({navigation}) => {
         isVisible={isModalVisible}
         coverScreen={false}
         onBackdropPress={() => setModalVisible(false)}
-
         // when fab menu is shown
         // style={{justifyContent: 'flex-end', margin: 0}}
-      ></Modal>
+      >
+        <AddCollection
+          toggle={toggleModal}
+          collection={name => {
+            collectionName = name;
+            addNewCollection();
+            // console.log(collectionsList);
+          }}
+        />
+      </Modal>
     </View>
   );
 };

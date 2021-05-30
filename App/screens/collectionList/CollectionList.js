@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, StyleSheet, View, StatusBar} from 'react-native';
 import colors from '../../constants/colors';
-import Fab from '../../components/fab';
+import Fab from '../../components/Fab';
 
 const Collections = () => {
   return (

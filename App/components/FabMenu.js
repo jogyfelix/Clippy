@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
-import colors from '../../constants/colors';
-import strings from '../../constants/strings';
+import colors from '../constants/colors';
+import strings from '../constants/strings';
 
 const FabMenu = ({toggleModal}) => {
   return (

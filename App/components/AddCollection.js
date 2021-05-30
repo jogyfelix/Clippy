@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, View, TextInput, TouchableOpacity} from 'react-native';
-import colors from '../../constants/colors';
-import strings from '../../constants/strings';
+import colors from '../constants/colors';
+import strings from '../constants/strings';
 
-const AddCollection = ({toggleModal}) => {
+const AddCollection = ({toggle, collection}) => {
+  const [collectionName, setCollectionName] = useState('');
+
   return (
-<View>
+    <View>
       <View style={{backgroundColor: colors.appPrimary, height: 48}}>
         <Text
           style={{
@@ -23,12 +25,16 @@ const AddCollection = ({toggleModal}) => {
           style={{
             fontSize: 14,
             fontFamily: 'IBMPlexSerif-SemiBoldItalic',
-            marginHorizont    al: 8,
+            marginHorizontal: 8,
             marginTop: 20,
           }}>
           {strings.collection_name}
         </Text>
         <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          value={collectionName}
+          onChangeText={newText => setCollectionName(newText)}
           style={{
             backgroundColor: colors.lightGray,
             marginHorizontal: 8,
@@ -52,7 +58,7 @@ const AddCollection = ({toggleModal}) => {
               height: 34,
               borderRadius: 4,
             }}
-            onPress={toggleModal}>
+            onPress={toggle}>
             <Text
               style={{
                 alignSelf: 'center',
@@ -70,7 +76,10 @@ const AddCollection = ({toggleModal}) => {
               marginLeft: 8,
               borderRadius: 4,
             }}
-            onPress={toggleModal}>
+            onPress={() => {
+              collection(collectionName);
+              toggle();
+            }}>
             <Text
               style={{
                 alignSelf: 'center',
