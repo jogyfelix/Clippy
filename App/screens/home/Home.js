@@ -6,6 +6,7 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
@@ -13,11 +14,15 @@ import screenNames from '../../constants/screenNames';
 import strings from '../../constants/strings';
 import Modal from 'react-native-modal';
 import AddCollection from '../../components/AddCollection';
+import {RowItem, RowSeparator, RowFooter} from '../../components/RowItem';
+
 import {addCollection, getCollections} from '../../data/localStorage';
+import FabMenu from '../../components/FabMenu';
 
 const Home = ({navigation}) => {
-  const [isModalVisible, setModalVisible] = useState(false);
   let collectionName = '';
+  const [collectionCount, setCollectionCount] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
   const [collectionsList, setCollectionsList] = useState([]);
 
   const toggleModal = () => {
@@ -30,31 +35,54 @@ const Home = ({navigation}) => {
         const addResult = await addCollection(collectionName);
         console.log(addResult);
         const result = await getCollections();
-        setCollectionsList(collectionsList);
-        console.log(result);
+        setCollectionsList(result);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getList = async () => {
+  const getCollectionList = async () => {
     try {
       const result = await getCollections();
       setCollectionsList(result);
-      console.log(collectionsList);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getList();
+    getCollectionList();
   }, []);
+
+  useEffect(() => {
+    if (collectionsList.length > 0) {
+      setCollectionCount(true);
+    } else {
+      setCollectionCount(false);
+    }
+  }, [collectionsList.length]);
 
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
+
+      <FlatList
+        data={collectionsList}
+        renderItem={item => {
+          return (
+            <RowItem
+              name={item.item.Name}
+              clips="No clips!"
+              onPress={() => navigation.push(screenNames.CollectionList)}
+            />
+          );
+        }}
+        ItemSeparatorComponent={() => <RowSeparator />}
+        ListFooterComponent={() => <RowFooter />}
+        keyExtractor={item => item.id}
+      />
+
       <View style={styles.fabParent}>
         <Fab onOpen={toggleModal} />
       </View>
@@ -63,16 +91,18 @@ const Home = ({navigation}) => {
         coverScreen={false}
         onBackdropPress={() => setModalVisible(false)}
         // when fab menu is shown
-        // style={{justifyContent: 'flex-end', margin: 0}}
-      >
-        <AddCollection
-          toggle={toggleModal}
-          collection={name => {
-            collectionName = name;
-            addNewCollection();
-            // console.log(collectionsList);
-          }}
-        />
+        style={[collectionCount ? styles.showFab : styles.showAddCollection]}>
+        {collectionCount ? (
+          <FabMenu toggle={toggleModal} />
+        ) : (
+          <AddCollection
+            toggle={toggleModal}
+            collection={name => {
+              collectionName = name;
+              addNewCollection();
+            }}
+          />
+        )}
       </Modal>
     </View>
   );
@@ -88,6 +118,8 @@ const styles = StyleSheet.create({
     right: 16,
     alignSelf: 'flex-end',
   },
+  showFab: {justifyContent: 'flex-end', margin: 0},
+  showAddCollection: {},
 });
 
 export default Home;
