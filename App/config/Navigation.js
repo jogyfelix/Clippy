@@ -9,7 +9,6 @@ import CollectionList from '../screens/collectionList/CollectionList';
 import strings from '../constants/strings';
 import screenNames from '../constants/screenNames';
 import colors from '../constants/colors';
-import HeaderButtons from '../components/HeaderButtons';
 
 const MainStack = createStackNavigator();
 const MainStackScreen = () => (
@@ -47,12 +46,6 @@ const MainStackScreen = () => (
           headerTitleStyle: {
             fontFamily: 'IBMPlexSerif-SemiBoldItalic',
           },
-          headerRight: () => (
-            <HeaderButtons
-              onEditClick={() => alert('edit clicked')}
-              onDeleteClick={() => alert('delete clicked')}
-            />
-          ),
         }}
       />
     </MainStack.Navigator>

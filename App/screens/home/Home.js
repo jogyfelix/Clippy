@@ -46,14 +46,19 @@ const Home = ({navigation}) => {
     try {
       const result = await getCollections();
       setCollectionsList(result);
+      console.log('run');
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getCollectionList();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getCollectionList();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     if (collectionsList.length > 0) {
@@ -74,7 +79,9 @@ const Home = ({navigation}) => {
             <RowItem
               name={item.item.Name}
               clips="No clips!"
-              onPress={() => navigation.push(screenNames.CollectionList)}
+              onPress={() =>
+                navigation.push(screenNames.CollectionList, item.item)
+              }
             />
           );
         }}

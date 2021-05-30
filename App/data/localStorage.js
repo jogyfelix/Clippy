@@ -37,3 +37,20 @@ export const getCollections = () => {
   });
   return promise;
 };
+
+export const deleteCollection = (id, name) => {
+  console.log(id, name);
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(function (txn) {
+      txn.executeSql(
+        'DELETE FROM Collections WHERE id=? and Name=?',
+        [id, name],
+        (tx, res) => {
+          resolve('Deleted');
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
