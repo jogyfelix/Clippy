@@ -23,7 +23,6 @@ export const addCollection = name => {
 };
 
 export const addClip = (url, collectionName) => {
-  console.log(url, collectionName);
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -44,11 +43,12 @@ export const addClip = (url, collectionName) => {
 };
 
 export const getClips = collectionName => {
+  console.log(collectionName);
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'SELECT * FROM Clips',
-        [],
+        'SELECT * FROM Clips where CollectionName = ?',
+        [collectionName],
         (tx, res) => {
           console.log(res.rows._array);
           resolve(res.rows._array);

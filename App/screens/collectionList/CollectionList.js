@@ -55,7 +55,7 @@ const Collections = ({route, navigation}) => {
 
   const getClipsList = async () => {
     try {
-      const result = await getClips();
+      const result = await getClips(item.Name);
       setClipsList(result);
     } catch (error) {
       console.log(error);
