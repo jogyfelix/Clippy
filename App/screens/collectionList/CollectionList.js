@@ -1,13 +1,15 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useLayoutEffect, useState, useEffect} from 'react';
 import {Text, StyleSheet, View, StatusBar, Alert} from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
 import HeaderButtons from '../../components/HeaderButtons';
 
-import {deleteCollection} from '../../data/localStorage';
+import {deleteCollection, getClips} from '../../data/localStorage';
 
 const Collections = ({route, navigation}) => {
   const item = route.params;
+
+  const [clipsList, setClipsList] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -19,6 +21,11 @@ const Collections = ({route, navigation}) => {
       ),
     });
   }, [navigation]);
+
+  useEffect(() => {
+    getClipsList();
+    console.log(clipsList);
+  }, []);
 
   const removeCollectionAlert = () => {
     Alert.alert('Alert', 'Are you sure you want to delete the collection ?', [
@@ -41,6 +48,15 @@ const Collections = ({route, navigation}) => {
       const result = await deleteCollection(item.id, item.Name);
       console.log(result);
       navigation.goBack();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getClipsList = async () => {
+    try {
+      const result = await getClips();
+      setClipsList(result);
     } catch (error) {
       console.log(error);
     }

@@ -3,7 +3,7 @@ import {Text, View, TouchableOpacity} from 'react-native';
 import colors from '../constants/colors';
 import strings from '../constants/strings';
 
-const FabMenu = ({toggleModal}) => {
+const FabMenu = ({toggle, type}) => {
   return (
     <View
       style={{
@@ -11,7 +11,10 @@ const FabMenu = ({toggleModal}) => {
       }}>
       <TouchableOpacity
         style={{alignSelf: 'center', marginTop: 24}}
-        onPress={toggleModal}>
+        onPress={() => {
+          type('clip');
+          toggle();
+        }}>
         <Text
           style={{
             fontSize: 14,
@@ -23,7 +26,10 @@ const FabMenu = ({toggleModal}) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={{alignSelf: 'center', marginVertical: 28}}
-        onPress={toggleModal}>
+        onPress={() => {
+          type('collection');
+          toggle();
+        }}>
         <Text
           style={{
             fontSize: 14,

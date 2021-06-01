@@ -22,6 +22,44 @@ export const addCollection = name => {
   return promise;
 };
 
+export const addClip = (url, collectionName) => {
+  console.log(url, collectionName);
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,CollectionName text);',
+        [],
+      );
+      tx.executeSql(
+        'insert into Clips (Url,Read,CollectionName) values (?,?,?)',
+        [url, false, collectionName],
+        () => {
+          resolve('Saved');
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
+
+export const getClips = collectionName => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(function (txn) {
+      txn.executeSql(
+        'SELECT * FROM Clips',
+        [],
+        (tx, res) => {
+          console.log(res.rows._array);
+          resolve(res.rows._array);
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
+
 export const getCollections = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
