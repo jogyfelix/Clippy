@@ -1,4 +1,5 @@
 import SQLite from 'react-native-sqlite-2';
+import {getLinkPreview} from 'link-preview-js';
 
 const db = SQLite.openDatabase('clippy.db', '1.0', '', 1);
 
@@ -22,16 +23,24 @@ export const addCollection = name => {
   return promise;
 };
 
-export const addClip = (url, collectionName) => {
+export const addClip = async (url, collectionName) => {
+  const result = await getLinkPreview(url);
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,CollectionName text);',
+        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,Title text,SiteName text,ThumbIcon text,CollectionName text);',
         [],
       );
       tx.executeSql(
-        'insert into Clips (Url,Read,CollectionName) values (?,?,?)',
-        [url, false, collectionName],
+        'insert into Clips (Url,Read,Title,SiteName,ThumbIcon,CollectionName) values (?,?,?,?,?,?)',
+        [
+          url,
+          false,
+          result.title,
+          result.siteName,
+          result.favicons[0],
+          collectionName,
+        ],
         () => {
           resolve('Saved');
         },
@@ -50,7 +59,6 @@ export const getClips = collectionName => {
         'SELECT * FROM Clips where CollectionName = ?',
         [collectionName],
         (tx, res) => {
-          console.log(res.rows._array);
           resolve(res.rows._array);
         },
         (_, error) => reject(error),
@@ -80,6 +88,7 @@ export const deleteCollection = (id, name) => {
   console.log(id, name);
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
+      txn.executeSql('DELETE FROM Clips WHERE CollectionName=?', [name]);
       txn.executeSql(
         'DELETE FROM Collections WHERE id=? and Name=?',
         [id, name],

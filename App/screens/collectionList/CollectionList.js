@@ -1,10 +1,20 @@
 import React, {useLayoutEffect, useState, useEffect} from 'react';
-import {Text, StyleSheet, View, StatusBar, Alert} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  StatusBar,
+  Alert,
+  SectionList,
+  Image,
+} from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
 import HeaderButtons from '../../components/HeaderButtons';
-
+import _ from 'lodash';
 import {deleteCollection, getClips} from '../../data/localStorage';
+
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Collections = ({route, navigation}) => {
   const item = route.params;
@@ -24,7 +34,6 @@ const Collections = ({route, navigation}) => {
 
   useEffect(() => {
     getClipsList();
-    console.log(clipsList);
   }, []);
 
   const removeCollectionAlert = () => {
@@ -56,7 +65,22 @@ const Collections = ({route, navigation}) => {
   const getClipsList = async () => {
     try {
       const result = await getClips(item.Name);
-      setClipsList(result);
+      const groups = _(result)
+        .groupBy('Read')
+        .map((details, title) => {
+          const data = details.map(detail => ({
+            title: detail.Title,
+            siteName: detail.SiteName,
+            icon: detail.ThumbIcon,
+          }));
+          return {
+            title,
+            data,
+          };
+        })
+        .value();
+
+      setClipsList(groups);
     } catch (error) {
       console.log(error);
     }
@@ -65,6 +89,29 @@ const Collections = ({route, navigation}) => {
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
+      <SectionList
+        sections={clipsList}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({item}) => {
+          return (
+            <TouchableOpacity>
+              <View>
+                <Image
+                  style={{width: 50, height: 50}}
+                  source={{
+                    uri: item.icon,
+                  }}
+                />
+                <Text>{item.title}</Text>
+                <Text>{item.siteName}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+        renderSectionHeader={({section: {title}}) => (
+          <Text style={styles.header}>{title}</Text>
+        )}
+      />
       <View style={styles.fabParent}>
         <Fab onOpen={() => alert('clicked')} />
       </View>
