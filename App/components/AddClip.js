@@ -40,7 +40,6 @@ const AddClip = ({toggle, collectionList, saveUrl}) => {
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
-            itemSeparator={true}
             style={styles.dropDown}
             dropDownContainerStyle={styles.dropDownContainer}
             textStyle={styles.dropDownText}
