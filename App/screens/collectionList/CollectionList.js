@@ -33,6 +33,7 @@ import {
   getCollections,
   addClip,
   deleteClip,
+  updateClip,
 } from '../../data/localStorage';
 
 const Collections = ({route, navigation}) => {
@@ -46,6 +47,7 @@ const Collections = ({route, navigation}) => {
   const [fabClicked, setFabClicked] = useState(false);
   const [modalType, setModalType] = useState(false);
   const [isSubModalVisible, setSubModalVisible] = useState(false);
+  const [editValue, setEditValue] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -55,7 +57,11 @@ const Collections = ({route, navigation}) => {
     navigation.setOptions({
       headerRight: () => (
         <HeaderButtons
-          onEditClick={() => alert('edit clicked')}
+          onEditClick={() => {
+            setModalType(false);
+            setEditValue(true);
+            toggleSubModal();
+          }}
           onDeleteClick={() => removeCollectionAlert()}
         />
       ),
@@ -93,6 +99,18 @@ const Collections = ({route, navigation}) => {
       console.log(error);
     }
   };
+
+  const updateSelectedClip = async (url, name) => {
+    try {
+      console.log(url, name, selectedItem.id);
+      const addResult = await updateClip(url, name, selectedItem.id);
+      console.log(addResult);
+      getClipsList();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const removeClipAlert = (collName, url) => {
     Alert.alert('Alert', 'Are you sure you want to delete the clip ?', [
       {
@@ -177,6 +195,7 @@ const Collections = ({route, navigation}) => {
             icon: detail.ThumbIcon,
             url: detail.Url,
             collectionName: detail.CollectionName,
+            id: detail.id,
           }));
           return {
             title,
@@ -204,7 +223,6 @@ const Collections = ({route, navigation}) => {
         sections={clipsList}
         keyExtractor={(item, index) => item + index}
         renderItem={({item}) => {
-          console.log(item);
           return (
             <TouchableOpacity
               onPress={() => openLink(item.url)}
@@ -256,6 +274,7 @@ const Collections = ({route, navigation}) => {
             type={type => {
               setFabClicked(false);
               setModalVisible(false);
+              setEditValue(false);
               type === 'clip' ? setModalType(true) : setModalType(false);
               toggleSubModal();
             }}
@@ -274,6 +293,7 @@ const Collections = ({route, navigation}) => {
                   break;
                 case 'edit':
                   setModalType(true);
+                  setEditValue(true);
                   toggleSubModal();
                   break;
                 case 'delete':
@@ -299,9 +319,14 @@ const Collections = ({route, navigation}) => {
             toggle={toggleSubModal}
             collectionList={collectionsList}
             saveUrl={value => {
-              console.log(value);
-              addNewClip(value.url, value.collectionName);
+              console.log(value.item);
+              editValue
+                ? updateSelectedClip(value.url, value.collectionName)
+                : addNewClip(value.url, value.collectionName);
             }}
+            edit={editValue}
+            collectionName={selectedItem.collectionName}
+            clipName={selectedItem.url}
           />
         ) : (
           <AddCollection
@@ -340,3 +365,5 @@ const styles = StyleSheet.create({
 });
 
 export default Collections;
+
+//TODO update function setup

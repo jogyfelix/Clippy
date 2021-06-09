@@ -83,6 +83,22 @@ export const changeClipRead = url => {
   return promise;
 };
 
+export const updateClip = (url, collectionName, id) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(function (txn) {
+      txn.executeSql(
+        'update Clips set Url=?,CollectionName=? where id=?',
+        [url, collectionName, id],
+        (tx, res) => {
+          resolve('Updated');
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
+
 export const getCollections = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {

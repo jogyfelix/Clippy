@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -10,12 +10,21 @@ import colors from '../constants/colors';
 import strings from '../constants/strings';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const AddClip = ({toggle, collectionList, saveUrl}) => {
+const AddClip = ({
+  toggle,
+  collectionList,
+  saveUrl,
+  edit,
+  collectionName,
+  clipName,
+}) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
 
   const [urlName, setUrlName] = useState('');
+
+  console.log(edit, collectionName, clipName);
 
   const collections = collectionList.map(currentValue => {
     const list = {
@@ -25,10 +34,19 @@ const AddClip = ({toggle, collectionList, saveUrl}) => {
     return list;
   });
 
+  useEffect(() => {
+    if (edit) {
+      setUrlName(clipName);
+      setValue(collectionName);
+    }
+  }, []);
+
   return (
     <View>
       <View style={styles.topBar}>
-        <Text style={styles.title}>{strings.create_clip}</Text>
+        <Text style={styles.title}>
+          {edit ? 'Update Clip' : strings.create_clip}
+        </Text>
       </View>
       <View style={styles.dialogParent}>
         <Text style={styles.collectionText}>{strings.collection}</Text>
@@ -65,9 +83,12 @@ const AddClip = ({toggle, collectionList, saveUrl}) => {
                 url: urlName,
                 collectionName: value,
               });
+
               toggle();
             }}>
-            <Text style={styles.createText}>{strings.create}</Text>
+            <Text style={styles.createText}>
+              {edit ? 'Update' : strings.create}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
