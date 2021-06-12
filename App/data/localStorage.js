@@ -23,16 +23,16 @@ export const addCollection = name => {
   return promise;
 };
 
-export const addClip = async (url, collectionName) => {
+export const addClip = async (url, collectionName, id) => {
   const result = await getLinkPreview(url);
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,Title text,SiteName text,ThumbIcon text,CollectionName text);',
+        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,Title text,SiteName text,ThumbIcon text,CollectionName text,CollectionId integer);',
         [],
       );
       tx.executeSql(
-        'insert into Clips (Url,Read,Title,SiteName,ThumbIcon,CollectionName) values (?,?,?,?,?,?)',
+        'insert into Clips (Url,Read,Title,SiteName,ThumbIcon,CollectionName,CollectionId) values (?,?,?,?,?,?,?)',
         [
           url,
           false,
@@ -40,6 +40,7 @@ export const addClip = async (url, collectionName) => {
           result.siteName,
           result.favicons[0],
           collectionName,
+          id,
         ],
         () => {
           resolve('Saved');
@@ -67,12 +68,12 @@ export const getClips = collectionName => {
   return promise;
 };
 
-export const changeClipRead = url => {
+export const changeClipRead = (url, id) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'update Clips set Read=? where Url = ?',
-        [true, url],
+        'update Clips set Read=? where Url = ? AND Id=?',
+        [true, url, id],
         (tx, res) => {
           resolve('Updated');
         },
@@ -83,12 +84,41 @@ export const changeClipRead = url => {
   return promise;
 };
 
-export const updateClip = (url, collectionName, id) => {
+export const updateClip = async (url, collectionName, id) => {
+  const result = await getLinkPreview(url);
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'update Clips set Url=?,CollectionName=? where id=?',
-        [url, collectionName, id],
+        'update Clips set Url=?,CollectionName=?,Title=?,SiteName=?,ThumbIcon=? where id=?',
+        [
+          url,
+          collectionName,
+          result.title,
+          result.siteName,
+          result.favicons[0],
+          id,
+        ],
+        (tx, res) => {
+          resolve('Updated');
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
+
+export const updateCollection = (newName, collectionName, collectionId) => {
+  console.log(newName, collectionName, collectionId);
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(function (txn) {
+      txn.executeSql('update Collections set Name=? where id=?', [
+        newName,
+        collectionId,
+      ]);
+      txn.executeSql(
+        'update Clips set CollectionName=? where CollectionId=?',
+        [newName, collectionId],
         (tx, res) => {
           resolve('Updated');
         },
@@ -132,12 +162,12 @@ export const deleteCollection = (id, name) => {
   return promise;
 };
 
-export const deleteClip = (collectionName, url) => {
+export const deleteClip = (collectionName, url, id) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'DELETE FROM Clips WHERE CollectionName=? AND Url=?',
-        [collectionName, url],
+        'DELETE FROM Clips WHERE CollectionName=? AND Url=? AND Id=?',
+        [collectionName, url, id],
         (tx, res) => {
           resolve('Deleted');
         },

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -9,13 +9,21 @@ import {
 import colors from '../constants/colors';
 import strings from '../constants/strings';
 
-const AddCollection = ({toggle, collection}) => {
+const AddCollection = ({toggle, collection, edit, name}) => {
   const [collectionName, setCollectionName] = useState('');
+
+  useEffect(() => {
+    if (edit) {
+      setCollectionName(name);
+    }
+  }, []);
 
   return (
     <View>
       <View style={styles.topBar}>
-        <Text style={styles.title}>{strings.create_collection}</Text>
+        <Text style={styles.title}>
+          {edit ? 'Update Collection' : strings.create_collection}
+        </Text>
       </View>
       <View style={styles.dialogParent}>
         <Text style={styles.collectionText}>{strings.collection_name}</Text>
@@ -36,7 +44,9 @@ const AddCollection = ({toggle, collection}) => {
               collection(collectionName);
               toggle();
             }}>
-            <Text style={styles.createText}>{strings.create}</Text>
+            <Text style={styles.createText}>
+              {edit ? 'Update' : strings.create}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

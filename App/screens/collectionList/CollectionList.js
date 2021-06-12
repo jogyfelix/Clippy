@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState, useEffect} from 'react';
+import React, {useLayoutEffect, useState, useEffect, useCallback} from 'react';
 import {
   Text,
   StyleSheet,
@@ -34,6 +34,7 @@ import {
   addClip,
   deleteClip,
   updateClip,
+  updateCollection,
 } from '../../data/localStorage';
 
 const Collections = ({route, navigation}) => {
@@ -48,6 +49,7 @@ const Collections = ({route, navigation}) => {
   const [modalType, setModalType] = useState(false);
   const [isSubModalVisible, setSubModalVisible] = useState(false);
   const [editValue, setEditValue] = useState(false);
+  const [editCollectionValue, setEditCollectionValue] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -59,7 +61,7 @@ const Collections = ({route, navigation}) => {
         <HeaderButtons
           onEditClick={() => {
             setModalType(false);
-            setEditValue(true);
+            setEditCollectionValue(true);
             toggleSubModal();
           }}
           onDeleteClick={() => removeCollectionAlert()}
@@ -69,7 +71,7 @@ const Collections = ({route, navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    getClipsList();
+    getClipsList(item.Name);
     getCollectionList();
   }, []);
 
@@ -92,9 +94,10 @@ const Collections = ({route, navigation}) => {
 
   const addNewClip = async (url, name) => {
     try {
-      const addResult = await addClip(url, name);
+      console.log(item);
+      const addResult = await addClip(url, name, item.id);
       console.log(addResult);
-      getClipsList();
+      getClipsList(item.Name);
     } catch (error) {
       console.log(error);
     }
@@ -102,10 +105,19 @@ const Collections = ({route, navigation}) => {
 
   const updateSelectedClip = async (url, name) => {
     try {
-      console.log(url, name, selectedItem.id);
       const addResult = await updateClip(url, name, selectedItem.id);
       console.log(addResult);
-      getClipsList();
+      getClipsList(item.Name);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateCurrentCollection = async newName => {
+    try {
+      const addResult = await updateCollection(newName, item.Name, item.id);
+      console.log(addResult);
+      getClipsList(newName);
     } catch (error) {
       console.log(error);
     }
@@ -129,9 +141,9 @@ const Collections = ({route, navigation}) => {
 
   const removeClip = async (name, url) => {
     try {
-      const addResult = await deleteClip(name, url);
+      const addResult = await deleteClip(name, url, selectedItem.id);
       console.log(addResult);
-      getClipsList();
+      getClipsList(item.Name);
     } catch (error) {
       console.log(error);
     }
@@ -165,7 +177,8 @@ const Collections = ({route, navigation}) => {
 
   const changeRead = async url => {
     try {
-      const result = await changeClipRead(url);
+      const result = await changeClipRead(url, selectedItem.id);
+      getClipsList(item.Name);
       console.log(result);
     } catch (error) {
       console.log(error);
@@ -182,10 +195,10 @@ const Collections = ({route, navigation}) => {
     }
   };
 
-  const getClipsList = async () => {
+  const getClipsList = async name => {
     try {
-      const result = await getClips(item.Name);
-
+      const result = await getClips(name);
+      console.log(result);
       const groups = _(result)
         .groupBy('Read')
         .map((details, title) => {
@@ -275,6 +288,7 @@ const Collections = ({route, navigation}) => {
               setFabClicked(false);
               setModalVisible(false);
               setEditValue(false);
+              setEditCollectionValue(false);
               type === 'clip' ? setModalType(true) : setModalType(false);
               toggleSubModal();
             }}
@@ -289,7 +303,6 @@ const Collections = ({route, navigation}) => {
                   break;
                 case 'read':
                   changeRead(selectedItem.url);
-                  getClipsList();
                   break;
                 case 'edit':
                   setModalType(true);
@@ -319,7 +332,6 @@ const Collections = ({route, navigation}) => {
             toggle={toggleSubModal}
             collectionList={collectionsList}
             saveUrl={value => {
-              console.log(value.item);
               editValue
                 ? updateSelectedClip(value.url, value.collectionName)
                 : addNewClip(value.url, value.collectionName);
@@ -333,8 +345,12 @@ const Collections = ({route, navigation}) => {
             toggle={toggleSubModal}
             collection={name => {
               collectionName = name;
-              addNewCollection();
+              editCollectionValue
+                ? updateCurrentCollection(name)
+                : addNewCollection();
             }}
+            edit={editCollectionValue}
+            name={item.Name}
           />
         )}
       </Modal>
@@ -366,4 +382,4 @@ const styles = StyleSheet.create({
 
 export default Collections;
 
-//TODO update function setup
+//TODO update function check collection

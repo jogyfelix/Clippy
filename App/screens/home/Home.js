@@ -51,7 +51,7 @@ const Home = ({navigation}) => {
 
   const addNewClip = async (url, name) => {
     try {
-      const addResult = await addClip(url, name);
+      const addResult = await addClip(url, name, collectionsList.CollectionId);
       console.log(addResult);
     } catch (error) {
       console.log(error);
