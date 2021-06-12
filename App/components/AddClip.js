@@ -21,10 +21,9 @@ const AddClip = ({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
+  let selectedLabel = '';
 
   const [urlName, setUrlName] = useState('');
-
-  console.log(edit, collectionName, clipName);
 
   const collections = collectionList.map(currentValue => {
     const list = {
@@ -55,6 +54,7 @@ const AddClip = ({
             open={open}
             value={value}
             items={collections}
+            label={selectedLabel}
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
@@ -79,6 +79,7 @@ const AddClip = ({
           <TouchableOpacity
             style={styles.createButton}
             onPress={() => {
+              console.log(value);
               saveUrl({
                 url: urlName,
                 collectionName: value,

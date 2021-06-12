@@ -16,8 +16,12 @@ import Modal from 'react-native-modal';
 import AddCollection from '../../components/AddCollection';
 import AddClip from '../../components/AddClip';
 import {RowItem, RowSeparator, RowFooter} from '../../components/RowItem';
-
-import {addCollection, getCollections, addClip} from '../../data/localStorage';
+import _ from 'lodash';
+import {
+  addCollection,
+  getCollectionsHome,
+  addClip,
+} from '../../data/localStorage';
 import FabMenu from '../../components/FabMenu';
 
 const Home = ({navigation}) => {
@@ -27,6 +31,7 @@ const Home = ({navigation}) => {
   const [isSubModalVisible, setSubModalVisible] = useState(false);
   const [collectionsList, setCollectionsList] = useState([]);
   const [modalType, setModalType] = useState(false);
+  const [childClips, setChildClips] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -41,8 +46,7 @@ const Home = ({navigation}) => {
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
         console.log(addResult);
-        const result = await getCollections();
-        setCollectionsList(result);
+        getCollectionList();
       }
     } catch (error) {
       console.log(error);
@@ -60,9 +64,24 @@ const Home = ({navigation}) => {
 
   const getCollectionList = async () => {
     try {
-      const result = await getCollections();
-      setCollectionsList(result);
-      console.log('run');
+      const result = await getCollectionsHome();
+      console.log(result);
+      const groups = _(result)
+        .groupBy('Name')
+        .map((details, title) => {
+          const data = details.map(o => o['Title']).join('\n');
+          const id = details[0].id;
+          const Name = details[0].Name;
+          return {
+            title,
+            data,
+            id,
+            Name,
+          };
+        })
+        .value();
+      console.log(groups);
+      setCollectionsList(groups);
     } catch (error) {
       console.log(error);
     }
@@ -93,8 +112,8 @@ const Home = ({navigation}) => {
         renderItem={item => {
           return (
             <RowItem
-              name={item.item.Name}
-              clips="No clips!"
+              name={item.item.title}
+              clips={item.item.data === '' ? 'No clips!' : item.item.data}
               onPress={() =>
                 navigation.push(screenNames.CollectionList, item.item)
               }

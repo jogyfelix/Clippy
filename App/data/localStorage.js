@@ -84,18 +84,19 @@ export const changeClipRead = (url, id) => {
   return promise;
 };
 
-export const updateClip = async (url, collectionName, id) => {
+export const updateClip = async (url, collectionName, id, collectionId) => {
   const result = await getLinkPreview(url);
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'update Clips set Url=?,CollectionName=?,Title=?,SiteName=?,ThumbIcon=? where id=?',
+        'update Clips set Url=?,CollectionName=?,Title=?,SiteName=?,ThumbIcon=?,CollectionId=? where id=?',
         [
           url,
           collectionName,
           result.title,
           result.siteName,
           result.favicons[0],
+          collectionId,
           id,
         ],
         (tx, res) => {
@@ -134,6 +135,22 @@ export const getCollections = () => {
     db.transaction(function (txn) {
       txn.executeSql(
         'SELECT * FROM Collections',
+        [],
+        (tx, res) => {
+          resolve(res.rows._array);
+        },
+        (_, error) => reject(error),
+      );
+    });
+  });
+  return promise;
+};
+
+export const getCollectionsHome = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(function (txn) {
+      txn.executeSql(
+        'SELECT CS.Id,CS.Name,CL.Title FROM Collections CS LEFT JOIN Clips CL ON CS.Name=CL.CollectionName AND CS.Id=CL.CollectionId',
         [],
         (tx, res) => {
           resolve(res.rows._array);

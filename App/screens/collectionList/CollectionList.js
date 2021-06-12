@@ -94,7 +94,6 @@ const Collections = ({route, navigation}) => {
 
   const addNewClip = async (url, name) => {
     try {
-      console.log(item);
       const addResult = await addClip(url, name, item.id);
       console.log(addResult);
       getClipsList(item.Name);
@@ -104,8 +103,9 @@ const Collections = ({route, navigation}) => {
   };
 
   const updateSelectedClip = async (url, name) => {
+    const obj = collectionsList.find(o => o.Name === name);
     try {
-      const addResult = await updateClip(url, name, selectedItem.id);
+      const addResult = await updateClip(url, name, selectedItem.id, obj.id);
       console.log(addResult);
       getClipsList(item.Name);
     } catch (error) {
@@ -189,7 +189,6 @@ const Collections = ({route, navigation}) => {
     try {
       const result = await getCollections();
       setCollectionsList(result);
-      console.log('run');
     } catch (error) {
       console.log(error);
     }
@@ -198,7 +197,6 @@ const Collections = ({route, navigation}) => {
   const getClipsList = async name => {
     try {
       const result = await getClips(name);
-      console.log(result);
       const groups = _(result)
         .groupBy('Read')
         .map((details, title) => {
