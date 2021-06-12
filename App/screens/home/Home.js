@@ -69,7 +69,10 @@ const Home = ({navigation}) => {
       const groups = _(result)
         .groupBy('Name')
         .map((details, title) => {
-          const data = details.map(o => o['Title']).join('\n');
+          const data = details
+            .slice(0, 3)
+            .map(o => o['Title'])
+            .join('\n');
           const id = details[0].id;
           const Name = details[0].Name;
           return {

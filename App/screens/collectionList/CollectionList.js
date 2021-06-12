@@ -8,8 +8,6 @@ import {
   SectionList,
   Image,
   Linking,
-  Button,
-  Switch,
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
