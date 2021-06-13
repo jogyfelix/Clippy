@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Text,
   StyleSheet,
   View,
   StatusBar,
-  TextInput,
-  TouchableOpacity,
   FlatList,
+  ActivityIndicator
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
@@ -24,6 +22,8 @@ import {
 } from '../../data/localStorage';
 import FabMenu from '../../components/FabMenu';
 
+
+
 const Home = ({navigation}) => {
   let collectionName = '';
   const [collectionCount, setCollectionCount] = useState(false);
@@ -31,7 +31,7 @@ const Home = ({navigation}) => {
   const [isSubModalVisible, setSubModalVisible] = useState(false);
   const [collectionsList, setCollectionsList] = useState([]);
   const [modalType, setModalType] = useState(false);
-  const [childClips, setChildClips] = useState([]);
+  const [showLoading, setShowLoading] =  useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -43,27 +43,35 @@ const Home = ({navigation}) => {
 
   const addNewCollection = async () => {
     try {
+     
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
         console.log(addResult);
+        setShowLoading(false)
         getCollectionList();
       }
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
   const addNewClip = async (url, name) => {
     try {
-      const addResult = await addClip(url, name, collectionsList.CollectionId);
+      const obj = collectionsList.find(o => o.Name === name);
+      const addResult = await addClip(url, name, obj.id);
       console.log(addResult);
+      getCollectionList()
+      setShowLoading(false)
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
   const getCollectionList = async () => {
     try {
+      
       const result = await getCollectionsHome();
       console.log(result);
       const groups = _(result)
@@ -85,6 +93,7 @@ const Home = ({navigation}) => {
         .value();
       console.log(groups);
       setCollectionsList(groups);
+      setShowLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -109,14 +118,15 @@ const Home = ({navigation}) => {
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
-
+      <ActivityIndicator size="large" color={colors.appPrimary}
+       style={styles.loading} animating={showLoading} />
       <FlatList
         data={collectionsList}
         renderItem={item => {
           return (
             <RowItem
               name={item.item.title}
-              clips={item.item.data === '' ? 'No clips!' : item.item.data}
+              clips={item.item.data === '' ? strings.NO_CLIPS : item.item.data}
               onPress={() =>
                 navigation.push(screenNames.CollectionList, item.item)
               }
@@ -151,6 +161,7 @@ const Home = ({navigation}) => {
             toggle={toggleModal}
             collection={name => {
               collectionName = name;
+              setShowLoading(true)
               addNewCollection();
             }}
           />
@@ -168,7 +179,8 @@ const Home = ({navigation}) => {
             toggle={toggleSubModal}
             collectionList={collectionsList}
             saveUrl={value => {
-              console.log(value);
+             
+              setShowLoading(true)
               addNewClip(value.url, value.collectionName);
             }}
           />
@@ -177,6 +189,7 @@ const Home = ({navigation}) => {
             toggle={toggleSubModal}
             collection={name => {
               collectionName = name;
+              setShowLoading(true)
               addNewCollection();
             }}
           />
@@ -187,6 +200,7 @@ const Home = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  loading:{position:'absolute',alignSelf:'center',top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center'},
   homeParent: {
     flex: 1,
   },

@@ -12,7 +12,7 @@ const FabMenu = ({toggle, type}) => {
           type('clip');
           toggle();
         }}>
-        <Text style={styles.createText}>{strings.create_clip}</Text>
+        <Text style={styles.createText}>{strings.CREATE_CLIP}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.createCollectionParent}
@@ -21,7 +21,7 @@ const FabMenu = ({toggle, type}) => {
           toggle();
         }}>
         <Text style={styles.createCollectionText}>
-          {strings.create_collection}
+          {strings.CREATE_COLLECTION}
         </Text>
       </TouchableOpacity>
     </View>

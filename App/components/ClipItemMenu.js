@@ -12,7 +12,7 @@ const ClipItemMenu = ({toggle, type}) => {
           type('browser');
           toggle();
         }}>
-        <Text style={styles.createText}>Open in browser</Text>
+        <Text style={styles.createText}>{strings.OPEN_IN_BROWSER}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.itemTouchParent}
@@ -20,7 +20,7 @@ const ClipItemMenu = ({toggle, type}) => {
           type('read');
           toggle();
         }}>
-        <Text style={styles.createCollectionText}>Mark as read</Text>
+        <Text style={styles.createCollectionText}>{strings.MARK_AS_READ}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.itemTouchParent}
@@ -28,7 +28,7 @@ const ClipItemMenu = ({toggle, type}) => {
           type('edit');
           toggle();
         }}>
-        <Text style={styles.createCollectionText}>Edit</Text>
+        <Text style={styles.createCollectionText}>{strings.EDIT}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.itemTouchBottomParent}
@@ -36,7 +36,7 @@ const ClipItemMenu = ({toggle, type}) => {
           type('delete');
           toggle();
         }}>
-        <Text style={styles.createCollectionText}>Delete</Text>
+        <Text style={styles.createCollectionText}>{strings.DELETE}</Text>
       </TouchableOpacity>
     </View>
   );

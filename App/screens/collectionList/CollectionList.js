@@ -8,6 +8,7 @@ import {
   SectionList,
   Image,
   Linking,
+  ActivityIndicator
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
@@ -34,6 +35,7 @@ import {
   updateClip,
   updateCollection,
 } from '../../data/localStorage';
+import strings from '../../constants/strings';
 
 const Collections = ({route, navigation}) => {
   const item = route.params;
@@ -48,6 +50,7 @@ const Collections = ({route, navigation}) => {
   const [isSubModalVisible, setSubModalVisible] = useState(false);
   const [editValue, setEditValue] = useState(false);
   const [editCollectionValue, setEditCollectionValue] = useState(false);
+  const [showLoading, setShowLoading] =  useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -84,9 +87,11 @@ const Collections = ({route, navigation}) => {
         console.log(addResult);
         const result = await getCollections();
         setCollectionsList(result);
+        setShowLoading(false)
       }
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -95,8 +100,10 @@ const Collections = ({route, navigation}) => {
       const addResult = await addClip(url, name, item.id);
       console.log(addResult);
       getClipsList(item.Name);
+      setShowLoading(false)
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -122,13 +129,13 @@ const Collections = ({route, navigation}) => {
   };
 
   const removeClipAlert = (collName, url) => {
-    Alert.alert('Alert', 'Are you sure you want to delete the clip ?', [
+    Alert.alert(strings.ALERT, strings.DELETE_ALERT, [
       {
-        text: 'Cancel',
+        text: strings.CANCEL,
         style: 'cancel',
       },
       {
-        text: 'OK',
+        text: strings.OK,
         onPress: () => {
           removeClip(collName, url);
         },
@@ -148,13 +155,13 @@ const Collections = ({route, navigation}) => {
   };
 
   const removeCollectionAlert = () => {
-    Alert.alert('Alert', 'Are you sure you want to delete the collection ?', [
+    Alert.alert(strings.ALERT, strings.DELETE_COLLECTION_ALERT, [
       {
-        text: 'Cancel',
+        text: strings.CANCEL,
         style: 'cancel',
       },
       {
-        text: 'OK',
+        text: strings.OK,
         onPress: () => {
           removeCollection();
         },
@@ -167,9 +174,11 @@ const Collections = ({route, navigation}) => {
     try {
       const result = await deleteCollection(item.id, item.Name);
       console.log(result);
+      setShowLoading(false)
       navigation.goBack();
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -177,9 +186,11 @@ const Collections = ({route, navigation}) => {
     try {
       const result = await changeClipRead(url, selectedItem.id);
       getClipsList(item.Name);
+      setShowLoading(false)
       console.log(result);
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -187,8 +198,10 @@ const Collections = ({route, navigation}) => {
     try {
       const result = await getCollections();
       setCollectionsList(result);
+      setShowLoading(false)
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -214,20 +227,24 @@ const Collections = ({route, navigation}) => {
         .value();
 
       setClipsList(groups);
+      setShowLoading(false)
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
   const openLink = url => {
     Linking.openURL(url).catch(() =>
-      Alert.alert('Sorry, something went wrong.', 'Please try again later.'),
+      Alert.alert(strings.ERROR_1, strings.TRY_AGAIN),
     );
   };
 
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
+      <ActivityIndicator size="large" color={colors.appPrimary}
+       style={styles.loading} animating={showLoading} />
       <SectionList
         sections={clipsList}
         keyExtractor={(item, index) => item + index}
@@ -240,28 +257,23 @@ const Collections = ({route, navigation}) => {
                 toggleModal();
                 setFabClicked(false);
               }}>
-              <View style={{flexDirection: 'row', padding: 8}}>
+              <View style={styles.sectionParent}>
                 <Image
-                  style={{width: 42, height: 42, marginHorizontal: 18}}
+                  style={styles.sectionImage}
                   source={{
                     uri: item.icon,
                   }}
                   defaultSource={require('../../assets/images/globe.png')}
                 />
                 <Text
-                  style={{
-                    alignSelf: 'center',
-                    fontSize: 14,
-                    fontFamily: 'IBMPlexSerif-SemiBoldItalic',
-                    flexShrink: 1,
-                  }}>{`${item.title} - ${item.siteName}`}</Text>
+                  style={styles.sectionText}>{`${item.title} - ${item.siteName}`}</Text>
               </View>
             </TouchableOpacity>
           );
         }}
         ItemSeparatorComponent={() => <RowSeparator />}
         renderSectionHeader={({section: {title}}) =>
-          title === '0' ? null : <Text style={styles.header}>Read</Text>
+          title === '0' ? null : <Text style={styles.header}>{strings.READ}</Text>
         }
       />
       <View style={styles.fabParent}>
@@ -328,6 +340,7 @@ const Collections = ({route, navigation}) => {
             toggle={toggleSubModal}
             collectionList={collectionsList}
             saveUrl={value => {
+              setShowLoading(true)
               editValue
                 ? updateSelectedClip(value.url, value.collectionName)
                 : addNewClip(value.url, value.collectionName);
@@ -340,6 +353,7 @@ const Collections = ({route, navigation}) => {
           <AddCollection
             toggle={toggleSubModal}
             collection={name => {
+              setShowLoading(true)
               collectionName = name;
               editCollectionValue
                 ? updateCurrentCollection(name)
@@ -355,6 +369,15 @@ const Collections = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  loading:{position:'absolute',alignSelf:'center',top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center'},
+  sectionText:{
+    alignSelf: 'center',
+    fontSize: 14,
+    fontFamily: 'IBMPlexSerif-SemiBoldItalic',
+    flexShrink: 1,
+  },
+  sectionImage:{width: 42, height: 42, marginHorizontal: 18},
+  sectionParent:{flexDirection: 'row', padding: 8},
   clipModalStyle: {
     justifyContent: 'flex-end',
     margin: 0,

@@ -21,8 +21,6 @@ const AddClip = ({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
-  let selectedLabel = '';
-
   const [urlName, setUrlName] = useState('');
 
   const collections = collectionList.map(currentValue => {
@@ -44,17 +42,16 @@ const AddClip = ({
     <View>
       <View style={styles.topBar}>
         <Text style={styles.title}>
-          {edit ? 'Update Clip' : strings.create_clip}
+          {edit ? strings.update_clip : strings.CREATE_CLIP}
         </Text>
       </View>
       <View style={styles.dialogParent}>
-        <Text style={styles.collectionText}>{strings.collection}</Text>
+        <Text style={styles.collectionText}>{strings.COLLECTION}</Text>
         <View style={styles.dropDownParent}>
           <DropDownPicker
             open={open}
             value={value}
             items={collections}
-            label={selectedLabel}
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
@@ -64,7 +61,7 @@ const AddClip = ({
           />
         </View>
 
-        <Text style={styles.urlTitle}>{strings.url}</Text>
+        <Text style={styles.urlTitle}>{strings.URL}</Text>
         <TextInput
           style={styles.urlInput}
           autoCapitalize="none"
@@ -74,7 +71,7 @@ const AddClip = ({
         />
         <View style={styles.buttonParent}>
           <TouchableOpacity style={styles.cancelButton} onPress={toggle}>
-            <Text style={styles.cancelText}>{strings.cancel}</Text>
+            <Text style={styles.cancelText}>{strings.CANCEL}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createButton}
@@ -88,7 +85,7 @@ const AddClip = ({
               toggle();
             }}>
             <Text style={styles.createText}>
-              {edit ? 'Update' : strings.create}
+              {edit ? strings.UPDATE : strings.CREATE}
             </Text>
           </TouchableOpacity>
         </View>

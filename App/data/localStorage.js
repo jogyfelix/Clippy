@@ -72,8 +72,8 @@ export const changeClipRead = (url, id) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql(
-        'update Clips set Read=? where Url = ? AND Id=?',
-        [true, url, id],
+        'update Clips set Read = CASE WHEN Read = 0 THEN 1 ELSE 0 END where Url = ? AND Id=?',
+        [url, id],
         (tx, res) => {
           resolve('Updated');
         },

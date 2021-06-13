@@ -1,9 +1,6 @@
 import React from 'react';
-import {TouchableOpacity, View} from 'react-native';
-
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
 import Home from '../screens/home/Home';
 import CollectionList from '../screens/collectionList/CollectionList';
 import strings from '../constants/strings';

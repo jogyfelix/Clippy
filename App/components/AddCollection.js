@@ -22,11 +22,11 @@ const AddCollection = ({toggle, collection, edit, name}) => {
     <View>
       <View style={styles.topBar}>
         <Text style={styles.title}>
-          {edit ? 'Update Collection' : strings.create_collection}
+          {edit ? 'Update Collection' : strings.CREATE_COLLECTION}
         </Text>
       </View>
       <View style={styles.dialogParent}>
-        <Text style={styles.collectionText}>{strings.collection_name}</Text>
+        <Text style={styles.collectionText}>{strings.COLLECTION_NAME}</Text>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -36,7 +36,7 @@ const AddCollection = ({toggle, collection, edit, name}) => {
         />
         <View style={styles.buttonsParent}>
           <TouchableOpacity style={styles.cancelButton} onPress={toggle}>
-            <Text style={styles.cancelText}>{strings.cancel}</Text>
+            <Text style={styles.cancelText}>{strings.CANCEL}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.createButton}
@@ -45,7 +45,7 @@ const AddCollection = ({toggle, collection, edit, name}) => {
               toggle();
             }}>
             <Text style={styles.createText}>
-              {edit ? 'Update' : strings.create}
+              {edit ? 'Update' : strings.CREATE}
             </Text>
           </TouchableOpacity>
         </View>
