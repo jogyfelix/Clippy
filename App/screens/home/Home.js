@@ -1,10 +1,10 @@
-import React, {useState, useEffect,useContext} from 'react';
+import React, {useEffect, useContext, useReducer} from 'react';
 import {
   StyleSheet,
   View,
   StatusBar,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
@@ -21,65 +21,72 @@ import {
   addClip,
 } from '../../data/localStorage';
 import FabMenu from '../../components/FabMenu';
-import { ClippyContext } from '../../util/ClippyContext';
-
-
+import {ClippyContext} from '../../util/ClippyContext';
+import actionTypes from '../../constants/actionTypes';
+import {homeReducer} from './homeReducer';
 
 const Home = ({navigation}) => {
   let collectionName = '';
-  const [collectionCount, setCollectionCount] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isSubModalVisible, setSubModalVisible] = useState(false);
-  const [collectionsList, setCollectionsList] = useState([]);
-  const [modalType, setModalType] = useState(false);
-  const [showLoading, setShowLoading] =  useState(false);
 
-  const {
-    changingCollectionName,
-    setChangingCollectionName,
-  } = useContext(ClippyContext);
+  const [state, dispatch] = useReducer(homeReducer, {
+    collectionCount: false,
+    isModalVisible: false,
+    isSubModalVisible: false,
+    collectionsList: [],
+    modalType: false,
+    showLoading: false,
+  });
+
+  const {changingCollectionName, setChangingCollectionName} =
+    useContext(ClippyContext);
 
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    dispatch({
+      type: actionTypes.CHANGE_IS_MODAL_VISIBLE,
+      payload: !state.isModalVisible,
+    });
   };
 
   const toggleSubModal = () => {
-    setSubModalVisible(!isSubModalVisible);
+    dispatch({
+      type: actionTypes.CHANGE_IS_SUB_MODAL_VISIBLE,
+      payload: !state.isSubModalVisible,
+    });
   };
 
   const addNewCollection = async () => {
     try {
-     
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
         console.log(addResult);
-        setShowLoading(false)
+
+        dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
         getCollectionList();
-      
       }
     } catch (error) {
       console.log(error);
-      setShowLoading(false)
-  
+
+      dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
   };
 
   const addNewClip = async (url, name) => {
     try {
-      const obj = collectionsList.find(o => o.Name === name);
+      const obj = state.collectionsList.find(o => o.Name === name);
       const addResult = await addClip(url, name, obj.id);
       console.log(addResult);
-      getCollectionList()
-      setShowLoading(false)
+      getCollectionList();
+
+      dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     } catch (error) {
       console.log(error);
-      setShowLoading(false)
+
+      dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
   };
 
   const getCollectionList = async () => {
     try {
-      
       const result = await getCollectionsHome();
       console.log(result);
       const groups = _(result)
@@ -100,8 +107,10 @@ const Home = ({navigation}) => {
         })
         .value();
       console.log(groups);
-      setCollectionsList(groups);
-      setShowLoading(false)
+
+      dispatch({type: actionTypes.CHANGE_COLLECTION_LIST, payload: groups});
+
+      dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     } catch (error) {
       console.log(error);
     }
@@ -116,31 +125,33 @@ const Home = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    if (collectionsList.length > 0) {
-      setCollectionCount(true);
+    if (state.collectionsList.length > 0) {
+      dispatch({type: actionTypes.CHANGE_COLLECTION_COUNT, payload: true});
     } else {
-      setCollectionCount(false);
+      dispatch({type: actionTypes.CHANGE_COLLECTION_COUNT, payload: false});
     }
-  }, [collectionsList.length]);
+  }, [state.collectionsList.length]);
 
   return (
     <View style={styles.homeParent}>
       <StatusBar backgroundColor={colors.appPrimary} barStyle="light-content" />
-      <ActivityIndicator size="large" color={colors.appPrimary}
-       style={styles.loading} animating={showLoading} />
+      <ActivityIndicator
+        size="large"
+        color={colors.appPrimary}
+        style={styles.loading}
+        animating={state.showLoading}
+      />
       <FlatList
-        data={collectionsList}
+        data={state.collectionsList}
         renderItem={item => {
           return (
             <RowItem
               name={item.item.title}
               clips={item.item.data === '' ? strings.NO_CLIPS : item.item.data}
-              onPress={() =>
-               { setChangingCollectionName(item.item.Name)
-                navigation.push(screenNames.CollectionList, item.item)
-              }
-
-              }
+              onPress={() => {
+                setChangingCollectionName(item.item.Name);
+                navigation.push(screenNames.CollectionList, item.item);
+              }}
             />
           );
         }}
@@ -153,17 +164,30 @@ const Home = ({navigation}) => {
         <Fab onOpen={toggleModal} />
       </View>
       <Modal
-        isVisible={isModalVisible}
+        isVisible={state.isModalVisible}
         coverScreen={false}
-        onBackdropPress={() => setModalVisible(false)}
+        onBackdropPress={() =>
+          dispatch({type: actionTypes.CHANGE_IS_MODAL_VISIBLE, payload: false})
+        }
         // when fab menu is shown
-        style={[collectionCount ? styles.showFab : styles.showAddCollection]}>
-        {collectionCount ? (
+        style={[
+          state.collectionCount ? styles.showFab : styles.showAddCollection,
+        ]}>
+        {state.collectionCount ? (
           <FabMenu
             toggle={toggleModal}
             type={type => {
-              setModalVisible(false);
-              type === 'clip' ? setModalType(true) : setModalType(false);
+              dispatch({
+                type: actionTypes.CHANGE_IS_MODAL_VISIBLE,
+                payload: false,
+              });
+
+              type === 'clip'
+                ? dispatch({type: actionTypes.CHANGE_MODAL_TYPE, payload: true})
+                : dispatch({
+                    type: actionTypes.CHANGE_MODAL_TYPE,
+                    payload: false,
+                  });
               toggleSubModal();
             }}
           />
@@ -172,7 +196,8 @@ const Home = ({navigation}) => {
             toggle={toggleModal}
             collection={name => {
               collectionName = name;
-              setShowLoading(true)
+
+              dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: true});
               addNewCollection();
             }}
           />
@@ -180,18 +205,21 @@ const Home = ({navigation}) => {
       </Modal>
 
       <Modal
-        isVisible={isSubModalVisible}
+        isVisible={state.isSubModalVisible}
         coverScreen={false}
-        onBackdropPress={() => setSubModalVisible(false)}
-        // when fab menu is shown
+        onBackdropPress={() =>
+          dispatch({
+            type: actionTypes.CHANGE_IS_SUB_MODAL_VISIBLE,
+            payload: !false,
+          })
+        }
         style={styles.showAddCollection}>
-        {modalType ? (
+        {state.modalType ? (
           <AddClip
             toggle={toggleSubModal}
-            collectionList={collectionsList}
+            collectionList={state.collectionsList}
             saveUrl={value => {
-             
-              setShowLoading(true)
+              dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: true});
               addNewClip(value.url, value.collectionName);
             }}
           />
@@ -200,7 +228,8 @@ const Home = ({navigation}) => {
             toggle={toggleSubModal}
             collection={name => {
               collectionName = name;
-              setShowLoading(true)
+
+              dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: true});
               addNewCollection();
             }}
           />
@@ -211,7 +240,15 @@ const Home = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  loading:{position:'absolute',alignSelf:'center',top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center'},
+  loading: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
   homeParent: {
     flex: 1,
   },
