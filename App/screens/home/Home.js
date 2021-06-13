@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useContext} from 'react';
 import {
   StyleSheet,
   View,
@@ -21,6 +21,7 @@ import {
   addClip,
 } from '../../data/localStorage';
 import FabMenu from '../../components/FabMenu';
+import { ClippyContext } from '../../util/ClippyContext';
 
 
 
@@ -32,6 +33,11 @@ const Home = ({navigation}) => {
   const [collectionsList, setCollectionsList] = useState([]);
   const [modalType, setModalType] = useState(false);
   const [showLoading, setShowLoading] =  useState(false);
+
+  const {
+    changingCollectionName,
+    setChangingCollectionName,
+  } = useContext(ClippyContext);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -49,10 +55,12 @@ const Home = ({navigation}) => {
         console.log(addResult);
         setShowLoading(false)
         getCollectionList();
+      
       }
     } catch (error) {
       console.log(error);
       setShowLoading(false)
+  
     }
   };
 
@@ -128,7 +136,10 @@ const Home = ({navigation}) => {
               name={item.item.title}
               clips={item.item.data === '' ? strings.NO_CLIPS : item.item.data}
               onPress={() =>
+               { setChangingCollectionName(item.item.Name)
                 navigation.push(screenNames.CollectionList, item.item)
+              }
+
               }
             />
           );

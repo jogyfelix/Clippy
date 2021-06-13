@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState, useEffect, useCallback} from 'react';
+import React, {useLayoutEffect, useState, useEffect, useContext} from 'react';
 import {
   Text,
   StyleSheet,
@@ -36,6 +36,7 @@ import {
   updateCollection,
 } from '../../data/localStorage';
 import strings from '../../constants/strings';
+import { ClippyContext } from '../../util/ClippyContext';
 
 const Collections = ({route, navigation}) => {
   const item = route.params;
@@ -51,6 +52,13 @@ const Collections = ({route, navigation}) => {
   const [editValue, setEditValue] = useState(false);
   const [editCollectionValue, setEditCollectionValue] = useState(false);
   const [showLoading, setShowLoading] =  useState(false);
+
+
+  const {
+    changingCollectionName,
+    setChangingCollectionName,
+  } = useContext(ClippyContext);
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -72,7 +80,7 @@ const Collections = ({route, navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    getClipsList(item.Name);
+    getClipsList(changingCollectionName);
     getCollectionList();
   }, []);
 
@@ -99,8 +107,8 @@ const Collections = ({route, navigation}) => {
     try {
       const addResult = await addClip(url, name, item.id);
       console.log(addResult);
-      getClipsList(item.Name);
-      setShowLoading(false)
+      getClipsList(changingCollectionName);
+     
     } catch (error) {
       console.log(error);
       setShowLoading(false)
@@ -108,23 +116,26 @@ const Collections = ({route, navigation}) => {
   };
 
   const updateSelectedClip = async (url, name) => {
-    const obj = collectionsList.find(o => o.Name === name);
     try {
+      const obj = collectionsList.find(o => o.Name === name);
       const addResult = await updateClip(url, name, selectedItem.id, obj.id);
       console.log(addResult);
-      getClipsList(item.Name);
+      getClipsList(changingCollectionName);
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
   const updateCurrentCollection = async newName => {
     try {
+      setChangingCollectionName(newName)
       const addResult = await updateCollection(newName, item.Name, item.id);
       console.log(addResult);
       getClipsList(newName);
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -148,9 +159,10 @@ const Collections = ({route, navigation}) => {
     try {
       const addResult = await deleteClip(name, url, selectedItem.id);
       console.log(addResult);
-      getClipsList(item.Name);
+      getClipsList(changingCollectionName);
     } catch (error) {
       console.log(error);
+      setShowLoading(false)
     }
   };
 
@@ -185,8 +197,7 @@ const Collections = ({route, navigation}) => {
   const changeRead = async url => {
     try {
       const result = await changeClipRead(url, selectedItem.id);
-      getClipsList(item.Name);
-      setShowLoading(false)
+      getClipsList(changingCollectionName);
       console.log(result);
     } catch (error) {
       console.log(error);
@@ -225,7 +236,7 @@ const Collections = ({route, navigation}) => {
           };
         })
         .value();
-
+        console.log(groups)
       setClipsList(groups);
       setShowLoading(false)
     } catch (error) {
@@ -266,7 +277,7 @@ const Collections = ({route, navigation}) => {
                   defaultSource={require('../../assets/images/globe.png')}
                 />
                 <Text
-                  style={styles.sectionText}>{`${item.title} - ${item.siteName}`}</Text>
+                  style={styles.sectionText}>{`${item.title} - ${item.siteName !== null ?item.siteName : '' }`}</Text>
               </View>
             </TouchableOpacity>
           );

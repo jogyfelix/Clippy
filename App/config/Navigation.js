@@ -6,10 +6,13 @@ import CollectionList from '../screens/collectionList/CollectionList';
 import strings from '../constants/strings';
 import screenNames from '../constants/screenNames';
 import colors from '../constants/colors';
+import { ClippyContextProvider } from '../util/ClippyContext';
+
 
 const MainStack = createStackNavigator();
 const MainStackScreen = () => (
   <NavigationContainer>
+    <ClippyContextProvider>
     <MainStack.Navigator
     // initialRouteName={screenNames.CollectionList}
     >
@@ -46,6 +49,7 @@ const MainStackScreen = () => (
         }}
       />
     </MainStack.Navigator>
+    </ClippyContextProvider>
   </NavigationContainer>
 );
 
