@@ -26,6 +26,7 @@ import {RowSeparator} from '../../components/RowItem';
 import ClipItemMenu from '../../components/ClipItemMenu';
 import AddCollection from '../../components/AddCollection';
 import AddClip from '../../components/AddClip';
+import Toast from 'react-native-simple-toast';
 
 import {
   addCollection,
@@ -118,10 +119,11 @@ const Collections = ({route, navigation}) => {
           type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
           payload: false,
         });
+        Toast.show(addResult);
       }
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -136,7 +138,7 @@ const Collections = ({route, navigation}) => {
       getClipsList(changingCollectionName);
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -157,7 +159,7 @@ const Collections = ({route, navigation}) => {
       getClipsList(changingCollectionName);
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -173,7 +175,7 @@ const Collections = ({route, navigation}) => {
       getClipsList(newName);
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -204,7 +206,7 @@ const Collections = ({route, navigation}) => {
       getClipsList(changingCollectionName);
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -240,7 +242,7 @@ const Collections = ({route, navigation}) => {
       navigation.goBack();
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -253,9 +255,10 @@ const Collections = ({route, navigation}) => {
       const result = await changeClipRead(url, state.selectedItem.id);
       getClipsList(changingCollectionName);
       console.log(result);
+      Toast.show(result);
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -278,7 +281,7 @@ const Collections = ({route, navigation}) => {
       });
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -318,7 +321,7 @@ const Collections = ({route, navigation}) => {
       });
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
         payload: false,
@@ -344,6 +347,11 @@ const Collections = ({route, navigation}) => {
       <SectionList
         sections={state.clipsList}
         keyExtractor={(item, index) => item + index}
+        ListEmptyComponent={() => (
+          <Text style={styles.emptyView}>
+            No Clips to show. Use + button to add
+          </Text>
+        )}
         renderItem={({item}) => {
           return (
             <TouchableOpacity
@@ -398,6 +406,7 @@ const Collections = ({route, navigation}) => {
       <Modal
         isVisible={state.isModalVisible}
         style={styles.clipModalStyle}
+        coverScreen={false}
         onBackdropPress={() =>
           dispatch({
             type: actionTypes.CHANGE_IS_MODAL_VISIBLE_CLIP,
@@ -525,6 +534,13 @@ const Collections = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  emptyView: {
+    alignSelf: 'center',
+    marginTop: '80%',
+    fontSize: 14,
+    fontFamily: 'IBMPlexSerif-SemiBoldItalic',
+    color: 'gray',
+  },
   loading: {
     position: 'absolute',
     alignSelf: 'center',

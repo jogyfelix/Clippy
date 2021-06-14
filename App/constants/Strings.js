@@ -22,4 +22,5 @@ export default {
   TRY_AGAIN: 'Please try again later.',
   READ: 'Read',
   NO_CLIPS: 'No clips!',
+  WRONG_ALERT: 'Something went wrong.Try again',
 };

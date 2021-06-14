@@ -5,6 +5,7 @@ import {
   StatusBar,
   FlatList,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
@@ -24,6 +25,7 @@ import FabMenu from '../../components/FabMenu';
 import {ClippyContext} from '../../util/ClippyContext';
 import actionTypes from '../../constants/actionTypes';
 import {homeReducer} from './homeReducer';
+import Toast from 'react-native-simple-toast';
 
 const Home = ({navigation}) => {
   let collectionName = '';
@@ -59,13 +61,14 @@ const Home = ({navigation}) => {
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
         console.log(addResult);
+        Toast.show(addResult);
 
         dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
         getCollectionList();
       }
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
   };
@@ -75,12 +78,13 @@ const Home = ({navigation}) => {
       const obj = state.collectionsList.find(o => o.Name === name);
       const addResult = await addClip(url, name, obj.id);
       console.log(addResult);
+      Toast.show(addResult);
       getCollectionList();
 
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     } catch (error) {
       console.log(error);
-
+      Toast.show(strings.WRONG_ALERT);
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
   };
@@ -143,6 +147,11 @@ const Home = ({navigation}) => {
       />
       <FlatList
         data={state.collectionsList}
+        ListEmptyComponent={() => (
+          <Text style={styles.emptyView}>
+            No Clips! Start by creating a {'\n'}collection using the + button
+          </Text>
+        )}
         renderItem={item => {
           return (
             <RowItem
@@ -240,6 +249,13 @@ const Home = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  emptyView: {
+    alignSelf: 'center',
+    marginTop: '80%',
+    fontSize: 14,
+    fontFamily: 'IBMPlexSerif-SemiBoldItalic',
+    color: 'gray',
+  },
   loading: {
     position: 'absolute',
     alignSelf: 'center',

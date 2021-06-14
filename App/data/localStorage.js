@@ -11,10 +11,14 @@ export const addCollection = name => {
         [],
       );
       tx.executeSql(
+        'create table if not exists Clips (id integer primary key not null, Url text,Read boolean,Title text,SiteName text,ThumbIcon text,CollectionName text,CollectionId integer);',
+        [],
+      );
+      tx.executeSql(
         'insert into Collections (Name) values (?)',
         [name],
         () => {
-          resolve('Saved');
+          resolve('Added');
         },
         (_, error) => reject(error),
       );
@@ -43,7 +47,7 @@ export const addClip = async (url, collectionName, id) => {
           id,
         ],
         () => {
-          resolve('Saved');
+          resolve('Added');
         },
         (_, error) => reject(error),
       );
