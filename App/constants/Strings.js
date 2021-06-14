@@ -23,4 +23,5 @@ export default {
   READ: 'Read',
   NO_CLIPS: 'No clips!',
   WRONG_ALERT: 'Something went wrong.Try again',
+  ERROR_ALERT: 'Please fill in to continue',
 };

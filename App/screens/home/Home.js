@@ -26,6 +26,7 @@ import {ClippyContext} from '../../util/ClippyContext';
 import actionTypes from '../../constants/actionTypes';
 import {homeReducer} from './homeReducer';
 import Toast from 'react-native-simple-toast';
+import SplashScreen from 'react-native-splash-screen';
 
 const Home = ({navigation}) => {
   let collectionName = '';
@@ -127,6 +128,10 @@ const Home = ({navigation}) => {
 
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   useEffect(() => {
     if (state.collectionsList.length > 0) {

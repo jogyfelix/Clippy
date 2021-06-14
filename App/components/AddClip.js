@@ -9,6 +9,7 @@ import {
 import colors from '../constants/colors';
 import strings from '../constants/strings';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Toast from 'react-native-simple-toast';
 
 const AddClip = ({
   toggle,
@@ -51,6 +52,7 @@ const AddClip = ({
           <DropDownPicker
             open={open}
             value={value}
+            placeholder={'Select a Collection'}
             items={collections}
             setOpen={setOpen}
             setValue={setValue}
@@ -77,12 +79,15 @@ const AddClip = ({
             style={styles.createButton}
             onPress={() => {
               console.log(value);
-              saveUrl({
-                url: urlName,
-                collectionName: value,
-              });
-
-              toggle();
+              if (value !== null && urlName !== '') {
+                saveUrl({
+                  url: urlName,
+                  collectionName: value,
+                });
+                toggle();
+              } else {
+                Toast.show(strings.ERROR_ALERT);
+              }
             }}>
             <Text style={styles.createText}>
               {edit ? strings.UPDATE : strings.CREATE}

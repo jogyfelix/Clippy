@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import colors from '../constants/colors';
 import strings from '../constants/strings';
+import Toast from 'react-native-simple-toast';
 
 const AddCollection = ({toggle, collection, edit, name}) => {
   const [collectionName, setCollectionName] = useState('');
@@ -41,8 +42,12 @@ const AddCollection = ({toggle, collection, edit, name}) => {
           <TouchableOpacity
             style={styles.createButton}
             onPress={() => {
-              collection(collectionName);
-              toggle();
+              if (collectionName !== '') {
+                collection(collectionName);
+                toggle();
+              } else {
+                Toast.show(strings.ERROR_ALERT);
+              }
             }}>
             <Text style={styles.createText}>
               {edit ? 'Update' : strings.CREATE}
