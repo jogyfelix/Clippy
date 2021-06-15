@@ -43,7 +43,7 @@ const AddClip = ({
     <View>
       <View style={styles.topBar}>
         <Text style={styles.title}>
-          {edit ? strings.update_clip : strings.CREATE_CLIP}
+          {edit ? strings.UPDATE_CLIP : strings.CREATE_CLIP}
         </Text>
       </View>
       <View style={styles.dialogParent}>
