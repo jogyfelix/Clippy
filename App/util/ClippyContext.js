@@ -1,11 +1,10 @@
-import React, { createContext, useState } from 'react';
+import React, {createContext, useState} from 'react';
 
 export const ClippyContext = createContext();
 
-export const ClippyContextProvider = ({ children }) => {
-    const [changingCollectionName, setChangingCollectionName] =  useState('');
+export const ClippyContextProvider = ({children}) => {
+  const [changingCollectionName, setChangingCollectionName] = useState('');
 
- 
   const contextValue = {
     changingCollectionName,
     setChangingCollectionName,
