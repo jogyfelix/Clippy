@@ -528,10 +528,9 @@ const styles = StyleSheet.create({
   loading: {
     position: 'absolute',
     alignSelf: 'center',
-    top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 100,
     justifyContent: 'center',
   },
   sectionText: {
