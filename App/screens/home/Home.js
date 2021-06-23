@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useReducer} from 'react';
+import React, {useEffect, useContext, useReducer, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -31,6 +31,8 @@ import SplashScreen from 'react-native-splash-screen';
 const Home = ({navigation}) => {
   let collectionName = '';
 
+  const {setChangingCollectionName} = useContext(ClippyContext);
+
   const [state, dispatch] = useReducer(homeReducer, {
     collectionCount: false,
     isModalVisible: false,
@@ -39,8 +41,6 @@ const Home = ({navigation}) => {
     modalType: false,
     showLoading: false,
   });
-
-  const {setChangingCollectionName} = useContext(ClippyContext);
 
   const toggleModal = () => {
     dispatch({

@@ -22,6 +22,7 @@ const collectionReducer = (state, action) => {
       return {...state, editCollectionValue: action.payload};
     case actionTypes.CHANGE_SHOW_LOADING_CLIP:
       return {...state, showLoading: action.payload};
+
     default:
       return state;
   }

@@ -14,6 +14,7 @@ const homeReducer = (state, action) => {
       return {...state, modalType: action.payload};
     case actionTypes.CHANGE_SHOW_LOADING:
       return {...state, showLoading: action.payload};
+
     default:
       return state;
   }

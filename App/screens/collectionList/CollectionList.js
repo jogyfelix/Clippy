@@ -1,4 +1,10 @@
-import React, {useLayoutEffect, useReducer, useEffect, useContext} from 'react';
+import React, {
+  useLayoutEffect,
+  useReducer,
+  useEffect,
+  useContext,
+  useState,
+} from 'react';
 import {
   Text,
   StyleSheet,
@@ -27,6 +33,7 @@ import ClipItemMenu from '../../components/ClipItemMenu';
 import AddCollection from '../../components/AddCollection';
 import AddClip from '../../components/AddClip';
 import Toast from 'react-native-simple-toast';
+import NetInfo from '@react-native-community/netinfo';
 
 import {
   addCollection,
