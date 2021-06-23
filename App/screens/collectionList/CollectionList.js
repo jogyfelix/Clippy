@@ -107,7 +107,6 @@ const Collections = ({route, navigation}) => {
     try {
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
-        console.log(addResult);
         const result = await getCollections();
 
         dispatch({
@@ -122,7 +121,6 @@ const Collections = ({route, navigation}) => {
         Toast.show(addResult);
       }
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -134,10 +132,8 @@ const Collections = ({route, navigation}) => {
   const addNewClip = async (url, name) => {
     try {
       const addResult = await addClip(url, name, item.id);
-      console.log(addResult);
       getClipsList(changingCollectionName);
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -155,10 +151,8 @@ const Collections = ({route, navigation}) => {
         state.selectedItem.id,
         obj.id,
       );
-      console.log(addResult);
       getClipsList(changingCollectionName);
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -171,10 +165,8 @@ const Collections = ({route, navigation}) => {
     try {
       setChangingCollectionName(newName);
       const addResult = await updateCollection(newName, item.Name, item.id);
-      console.log(addResult);
       getClipsList(newName);
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -202,10 +194,8 @@ const Collections = ({route, navigation}) => {
   const removeClip = async (name, url) => {
     try {
       const addResult = await deleteClip(name, url, state.selectedItem.id);
-      console.log(addResult);
       getClipsList(changingCollectionName);
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -233,7 +223,6 @@ const Collections = ({route, navigation}) => {
   const removeCollection = async () => {
     try {
       const result = await deleteCollection(item.id, item.Name);
-      console.log(result);
 
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -241,7 +230,6 @@ const Collections = ({route, navigation}) => {
       });
       navigation.goBack();
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -254,10 +242,8 @@ const Collections = ({route, navigation}) => {
     try {
       const result = await changeClipRead(url, state.selectedItem.id);
       getClipsList(changingCollectionName);
-      console.log(result);
       Toast.show(result);
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -280,7 +266,6 @@ const Collections = ({route, navigation}) => {
         payload: false,
       });
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -320,7 +305,6 @@ const Collections = ({route, navigation}) => {
         payload: false,
       });
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,

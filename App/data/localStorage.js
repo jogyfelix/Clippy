@@ -114,7 +114,6 @@ export const updateClip = async (url, collectionName, id, collectionId) => {
 };
 
 export const updateCollection = (newName, collectionName, collectionId) => {
-  console.log(newName, collectionName, collectionId);
   const promise = new Promise((resolve, reject) => {
     db.transaction(function (txn) {
       txn.executeSql('update Collections set Name=? where id=?', [

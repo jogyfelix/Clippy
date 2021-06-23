@@ -78,7 +78,6 @@ const AddClip = ({
           <TouchableOpacity
             style={styles.createButton}
             onPress={() => {
-              console.log(value);
               if (value !== null && urlName !== '') {
                 saveUrl({
                   url: urlName,

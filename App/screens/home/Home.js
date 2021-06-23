@@ -61,14 +61,12 @@ const Home = ({navigation}) => {
     try {
       if (collectionName !== '') {
         const addResult = await addCollection(collectionName);
-        console.log(addResult);
         Toast.show(addResult);
 
         dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
         getCollectionList();
       }
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
@@ -78,13 +76,11 @@ const Home = ({navigation}) => {
     try {
       const obj = state.collectionsList.find(o => o.Name === name);
       const addResult = await addClip(url, name, obj.id);
-      console.log(addResult);
       Toast.show(addResult);
       getCollectionList();
 
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     } catch (error) {
-      console.log(error);
       Toast.show(strings.WRONG_ALERT);
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
     }
@@ -93,7 +89,6 @@ const Home = ({navigation}) => {
   const getCollectionList = async () => {
     try {
       const result = await getCollectionsHome();
-      console.log(result);
       const groups = _(result)
         .groupBy('Name')
         .map((details, title) => {
@@ -111,14 +106,10 @@ const Home = ({navigation}) => {
           };
         })
         .value();
-      console.log(groups);
-
       dispatch({type: actionTypes.CHANGE_COLLECTION_LIST, payload: groups});
 
       dispatch({type: actionTypes.CHANGE_SHOW_LOADING, payload: false});
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
