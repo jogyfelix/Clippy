@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useReducer, useState} from 'react';
+import React, {useEffect, useContext, useReducer} from 'react';
 import {
   StyleSheet,
   View,
