@@ -12,9 +12,7 @@ const MainStack = createStackNavigator();
 const MainStackScreen = () => (
   <NavigationContainer>
     <ClippyContextProvider>
-      <MainStack.Navigator
-      // initialRouteName={screenNames.CollectionList}
-      >
+      <MainStack.Navigator>
         <MainStack.Screen
           name={screenNames.Home}
           component={Home}

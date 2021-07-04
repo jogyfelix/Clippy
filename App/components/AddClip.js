@@ -21,7 +21,6 @@ const AddClip = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([]);
   const [urlName, setUrlName] = useState('');
 
   const collections = collectionList.map(currentValue => {
@@ -56,7 +55,6 @@ const AddClip = ({
             items={collections}
             setOpen={setOpen}
             setValue={setValue}
-            setItems={setItems}
             style={styles.dropDown}
             dropDownContainerStyle={styles.dropDownContainer}
             textStyle={styles.dropDownText}

@@ -14,6 +14,7 @@ import colors from '../../constants/colors';
 import Fab from '../../components/Fab';
 import FabMenu from '../../components/FabMenu';
 import HeaderButtons from '../../components/HeaderButtons';
+import R from 'ramda';
 import _ from 'lodash';
 import {
   deleteCollection,
@@ -131,7 +132,7 @@ const Collections = ({route, navigation}) => {
 
   const addNewClip = async (url, name) => {
     try {
-      const addResult = await addClip(url, name, item.id);
+      await addClip(url, name, item.id);
       getClipsList(changingCollectionName);
     } catch (error) {
       Toast.show(strings.WRONG_ALERT);
@@ -145,12 +146,7 @@ const Collections = ({route, navigation}) => {
   const updateSelectedClip = async (url, name) => {
     try {
       const obj = state.collectionsList.find(o => o.Name === name);
-      const addResult = await updateClip(
-        url,
-        name,
-        state.selectedItem.id,
-        obj.id,
-      );
+      await updateClip(url, name, state.selectedItem.id, obj.id);
       getClipsList(changingCollectionName);
     } catch (error) {
       Toast.show(strings.WRONG_ALERT);
@@ -164,7 +160,7 @@ const Collections = ({route, navigation}) => {
   const updateCurrentCollection = async newName => {
     try {
       setChangingCollectionName(newName);
-      const addResult = await updateCollection(newName, item.Name, item.id);
+      await updateCollection(newName, item.Name, item.id);
       getClipsList(newName);
     } catch (error) {
       Toast.show(strings.WRONG_ALERT);
@@ -193,7 +189,7 @@ const Collections = ({route, navigation}) => {
 
   const removeClip = async (name, url) => {
     try {
-      const addResult = await deleteClip(name, url, state.selectedItem.id);
+      await deleteClip(name, url, state.selectedItem.id);
       getClipsList(changingCollectionName);
     } catch (error) {
       Toast.show(strings.WRONG_ALERT);
@@ -222,7 +218,7 @@ const Collections = ({route, navigation}) => {
 
   const removeCollection = async () => {
     try {
-      const result = await deleteCollection(item.id, item.Name);
+      await deleteCollection(item.id, item.Name);
 
       dispatch({
         type: actionTypes.CHANGE_SHOW_LOADING_CLIP,
@@ -276,8 +272,8 @@ const Collections = ({route, navigation}) => {
 
   const getClipsList = async name => {
     try {
-      const result = await getClips(name);
-      const groups = _(result)
+      const res = await getClips(name);
+      const groups = _(res)
         .groupBy('Read')
         .map((details, title) => {
           const data = details.map(detail => ({
