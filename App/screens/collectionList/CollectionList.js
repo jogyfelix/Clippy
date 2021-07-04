@@ -7,7 +7,6 @@ import {
   Alert,
   SectionList,
   Image,
-  Linking,
   ActivityIndicator,
 } from 'react-native';
 import colors from '../../constants/colors';
@@ -60,7 +59,7 @@ const Collections = ({route, navigation}) => {
     showLoading: false,
   });
 
-  const {changingCollectionName, setChangingCollectionName} =
+  const {changingCollectionName, setChangingCollectionName, openLink} =
     useContext(ClippyContext);
 
   const toggleModal = () => {
@@ -307,12 +306,6 @@ const Collections = ({route, navigation}) => {
         payload: false,
       });
     }
-  };
-
-  const openLink = url => {
-    Linking.openURL(url).catch(() =>
-      Alert.alert(strings.ERROR_1, strings.TRY_AGAIN),
-    );
   };
 
   return (
